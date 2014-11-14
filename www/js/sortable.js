@@ -38,9 +38,10 @@
                     // Get the initial index
                     initialIndex = currentIndex = dragging.index(settings.draggable);
 
+                    var position = dragging.position();
+
                     // Get relative position of touch
                     var clientY = e.gesture.touches[0].clientY;
-                    var position = dragging.position();
                     offsetY = clientY - position.top - element.offset().top;
 
                     // Switch to Absolute position at same location
@@ -78,15 +79,12 @@
                     var newTop = touchY - offsetY - element.offset().top;
 
                     // Reposition the dragged element
-                    dragging.css({
-                        top: newTop + 'px'
-                    });
+                    dragging.css('top', newTop + 'px');
 
                     // Check for position in the list
                     var newIndex = 0;
                     cardSet.each(function (i) {
-                        var card = $(this);
-                        if (newTop > card.position().top) {
+                        if (newTop > $(this).position().top) {
                             newIndex = i + 1;
                         }
                     });
