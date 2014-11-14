@@ -1,0 +1,22 @@
+
+.pane, .view {
+    background-color: #e0e0e0;
+}
+
+.item-avatar .item-content > img:first-child {
+    width: 40px;
+    max-width: 40px;
+    height: 65px;
+    max-height: 65px;
+    margin-top: 12px;
+}
+
+.item-avatar .item-content .item-text-wrap {
+    font-size: 14px;
+    line-height: 1.3;
+}
+
+
+.item-light .item-divider {
+    background-color: white;
+}

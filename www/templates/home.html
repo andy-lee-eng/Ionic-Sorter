@@ -1,0 +1,25 @@
+<ion-view title="Ionic Sorter">
+    <ion-nav-buttons side="right">
+        <button class="button" ng-click="toggleReorder()" ng-class="showReorder ? 'active' : ''">Sort</button>
+    </ion-nav-buttons>
+
+    <ion-content>
+        <ion-list show-reorder="showReorder">
+            <ion-item ng-repeat="contact in contacts" class="item-light item-avatar card">
+                <img ng-src="/img/{{contact.img}}" />
+                <div class="item-divider">{{contact.name}}</div>
+                <div class="item-text-wrap">
+                    <ul>
+                        <li>Phone: {{contact.phone}}</li>
+                        <li>Mobile: {{contact.mobile}}</li>
+                        <li>Email: {{contact.email}}</li>
+                    </ul>
+
+                </div>
+                <ion-reorder-button class="ion-navicon"
+                                    on-reorder="onReorder($fromIndex, $toIndex)">
+                </ion-reorder-button>
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>
