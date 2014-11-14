@@ -4,7 +4,7 @@
         restrict: 'A',
         scope: {
             draggable: '@',
-            sorted: '='
+            sorted: '&'
         },
         link: function (scope, element, attrs) {
 
@@ -20,11 +20,11 @@
             var scrollInterval;
 
             var createPlaceholder = function createPlaceholder(height) {
-                // Use marginTop to compensate for extra margin when inserting the placeholder
+                // Use marginTop to compensate for extra margin when animating the placeholder
                 return $('<div></div>')
                         .css({
                             height: height + 'px',
-                            marginTop: (currentIndex > 0 ? -(marginTop + 1) : -1) + 'px'
+                            marginTop: (currentIndex > 0 ? -marginTop : -1) + 'px'
                         })
                         .addClass('placeholder');
             };
@@ -53,11 +53,15 @@
                     })
                     .addClass('dragging');
 
+                    // Get the set of cards that were re-ordering with
                     cardSet = element.find(settings.draggable + ':not(.dragging)');
 
-                    marginTop = parseInt(dragging.css('marginTop'));
-                    // Replace with placeholder
-                    placeholderHeight = dragging.outerHeight() + marginTop + 1;
+                    // We need to know the margin size so we can compensate for having two
+                    // margins where we previously had one (due to the placeholder being there)
+                    marginTop = parseInt(dragging.css('marginTop')) + 1;
+
+                    // Replace with placeholder (add the margin for when placeholder is full size)
+                    placeholderHeight = dragging.outerHeight() + marginTop;
                     placeholder = createPlaceholder(placeholderHeight);
                     placeholder.insertAfter(dragging);
 
@@ -114,8 +118,6 @@
                             }, settings.duration);
                         }, 50);
                     }
-
-
                 }
             }, element);
 
@@ -135,9 +137,10 @@
                     placeholder = null;
 
                     if (initialIndex !== currentIndex && scope.sorted) {
-                        scope.$apply(function () {
-                            scope.sorted(initialIndex, currentIndex);
-                        });
+                        // Call the callback with the instruction to re-order
+                        scope.$fromIndex = initialIndex;
+                        scope.$toIndex = currentIndex;
+                        scope.$apply(scope.sorted);
                     }
                     dragging = null;
 
@@ -145,9 +148,9 @@
                 }
             }, element);
 
-            // Autoscroll function to scroll window up and down
             var touchY, scrollHeight, containerTop, maxScroll;
             var scrollBorder = 80, scrollSpeed = 0.2;
+            // Setup the autoscroll based on the current scroll window size
             var initAutoScroll = function initAutoScroll() {
                 touchY = -1;
                 var scrollArea = element.closest('.scroll');
@@ -157,21 +160,28 @@
                 maxScroll = scrollArea.height() - scrollHeight;
             };
 
+            // Autoscroll function to scroll window up and down when
+            // the touch point is close to the top or bottom
             var autoScroll = function autoScroll() {
                 var scrollChange = 0;
                 if (touchY >= 0 && touchY < containerTop + scrollBorder) {
+                    // Should scroll up
                     scrollChange = touchY - (containerTop + scrollBorder);
                 } else if (touchY >= 0 && touchY > scrollHeight - scrollBorder) {
+                    // Should scroll down
                     scrollChange = touchY - (scrollHeight - scrollBorder);
                 }
 
                 if (scrollChange !== 0) {
+                    // get the updated scroll position
                     var newScroll = $ionicScrollDelegate.getScrollPosition().top + scrollSpeed * scrollChange;
+                    // Apply scroll limits
                     if (newScroll < 0)
                         newScroll = 0;
                     else if (newScroll > maxScroll)
                         newScroll = maxScroll;
 
+                    // Set the scroll position
                     $ionicScrollDelegate.scrollTo(0, newScroll, false);
                 }
             };

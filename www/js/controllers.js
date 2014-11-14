@@ -11,9 +11,6 @@ angular.module('starter.controllers', [])
         { name: 'Anne', img: 'anne.jpg', phone: '0101 123456', mobile: '0770 123456', email: 'frank@emailionicsorter.com' }
     ];
 
-    $scope.showReorder = false;
-    $scope.toggleReorder = function () { $scope.showReorder = !$scope.showReorder; };
-
     $scope.onReorder = function (fromIndex, toIndex) {
         var moved = $scope.contacts.splice(fromIndex, 1);
         $scope.contacts.splice(toIndex, 0, moved[0]);

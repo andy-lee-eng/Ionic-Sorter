@@ -3,11 +3,12 @@
     background-color: #e0e0e0;
 }
 
-.item-avatar > img:first-child, .item-avatar .item-content > img:first-child {
+.item-avatar .item-content > img:first-child {
     width: 40px;
     max-width: 40px;
     height: 65px;
     max-height: 65px;
+    margin-top: 12px;
 }
 
 .item-avatar .item-content .item-text-wrap {
@@ -37,5 +38,4 @@
     -o-transition: all 200ms ease-in-out;
     -webkit-transition: all 200ms ease-in-out;
     transition: all 200ms ease-in-out;
-
 }
