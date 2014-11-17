@@ -29,7 +29,7 @@
                         .addClass('placeholder');
             };
 
-            $ionicGesture.on('hold', function (e) {
+            var touchHold = function touchHold(e) {
                 // Get the element we're about to start dragging
                 dragging = angular.element(e.target).closest(settings.draggable);
                 if (!dragging.length) dragging = null;
@@ -70,12 +70,13 @@
                     initAutoScroll();
                     scrollInterval = setInterval(autoScroll, 20);
                 }
-            }, element);
+            };
+            var holdGesture = $ionicGesture.on('hold', touchHold, element);
 
-            $ionicGesture.on('touchmove', function (e) {
+            var touchMove = function touchMove(e) {
                 if (dragging) {
                     e.stopPropagation();
-                    touchY = e.touches[0].clientY;
+                    touchY = e.touches ? e.touches[0].clientY : e.clientY;
                     var newTop = touchY - offsetY - element.offset().top;
 
                     // Reposition the dragged element
@@ -117,9 +118,12 @@
                         }, 50);
                     }
                 }
-            }, element);
+            };
 
-            $ionicGesture.on('release', function (e) {
+            var touchMoveGesture = $ionicGesture.on('touchmove', touchMove, element);
+            var mouseMoveGesture = $ionicGesture.on('mousemove', touchMove, element);
+
+            var touchRelease = function touchRelease(e) {
                 if (dragging) {
                     // Set element back to normal
                     dragging.css({
@@ -144,7 +148,15 @@
 
                     clearInterval(scrollInterval);
                 }
-            }, element);
+            };
+            var releaseGesture = $ionicGesture.on('release', touchRelease, element);
+
+            scope.$on('$destroy', function () {
+                $ionicGesture.off(holdGesture, 'hold', touchHold);
+                $ionicGesture.off(touchMoveGesture, 'touchmove', touchMove);
+                $ionicGesture.off(mouseMoveGesture, 'mousemove', touchMove);
+                $ionicGesture.off(releaseGesture, 'release', touchRelease);
+            });
 
             var touchY, scrollHeight, containerTop, maxScroll;
             var scrollBorder = 80, scrollSpeed = 0.2;

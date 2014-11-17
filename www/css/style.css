@@ -20,6 +20,9 @@
 .item-light .item-divider {
     background-color: white;
 }
+.item-complex.item-light > .item-content.active, .item-complex.item-light > .item-content:active {
+    background-color: white;
+}
 
 .dragging {
     -moz-transform: scale(1.05, 1.05);
